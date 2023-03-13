@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Home from './components/Home'
 // import About from './components/About'
 import Navbar from './components/Navbar'
@@ -12,12 +12,23 @@ import NewProducts from './components/NewProducts'
 import { User } from './components/User'
 import UserDetails from './components/UserDetails'
 import Admin from './components/Admin'
+import Profiles from './components/Profiles'
+import AuthProvider from './context/Auth'
+import Login from './components/Login'
+import ProtectedRoute from './components/ProtectedRoute'
 const LazyAbout = React.lazy(() => import ('./components/About'))
 
 function App() {
-
+const location = useLocation()
+const navigate = useNavigate()
+// This will clear the history stack of the login page
+ useEffect (() =>{
+  if(location.state && location.state.pathname){
+    navigate('/', {replace: true})
+  }
+ }, [location, navigate])
   return (
-    <div className="App">
+    <AuthProvider className="App">
       <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
@@ -33,6 +44,8 @@ function App() {
           <Route path='featured' element={<Featured/>}/>
           <Route path='new' element={<NewProducts/>}/>
         </Route>
+        <Route path='/profiles' element={<ProtectedRoute><Profiles/></ProtectedRoute>}/>
+        <Route path='/login' element={<Login/>}/>
         <Route path='/users' element={<User/>}/>
         {/* Dynamic route */}
         <Route path='/users/:userId' element={<UserDetails/>}/>
@@ -40,7 +53,7 @@ function App() {
         {/* Page not found route */}
         <Route path='*' element={<NoMatch/>}/>
       </Routes>
-    </div>
+    </AuthProvider >
   )
 }
 
