@@ -1,13 +1,18 @@
+import React from 'react'
 import './App.css'
 import { Routes, Route } from 'react-router-dom'
 import Home from './components/Home'
-import About from './components/About'
+// import About from './components/About'
 import Navbar from './components/Navbar'
 import Order from './components/Order'
 import Product from './components/Product'
 import NoMatch from './components/NoMatch'
 import Featured from './components/Featured'
 import NewProducts from './components/NewProducts'
+import { User } from './components/User'
+import UserDetails from './components/UserDetails'
+import Admin from './components/Admin'
+const LazyAbout = React.lazy(() => import ('./components/About'))
 
 function App() {
 
@@ -16,7 +21,10 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/about' element={<About/>}/>
+        <Route path='/about' element={
+        <React.Suspense fallback='loading..'>
+          <LazyAbout/>
+          </React.Suspense>}/>
         <Route path='/order' element = {<Order/>} />
         <Route path='/products' element={<Product/>}>
           {/* Nested Routes */}
@@ -25,6 +33,10 @@ function App() {
           <Route path='featured' element={<Featured/>}/>
           <Route path='new' element={<NewProducts/>}/>
         </Route>
+        <Route path='/users' element={<User/>}/>
+        {/* Dynamic route */}
+        <Route path='/users/:userId' element={<UserDetails/>}/>
+        <Route path='/users/admin' element={<Admin/>}/>
         {/* Page not found route */}
         <Route path='*' element={<NoMatch/>}/>
       </Routes>
